@@ -63,7 +63,7 @@ static void print_usage(FILE *out)
 
 static void print_version(void)
 {
-  fprintf(stdout, "GNU which v" VERSION ", Copyright (C) 1999 - 2015 Carlo Wood.\n");
+  fprintf(stdout, "GNU which v" VERSION ", Copyright (C) 1999 - 2024 Carlo Wood.\n");
   fprintf(stdout, "GNU which comes with ABSOLUTELY NO WARRANTY;\n");
   fprintf(stdout, "This program is free software; your freedom to use, change\n");
   fprintf(stdout, "and distribute this program is protected by the GPL.\n");

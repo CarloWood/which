@@ -1,5 +1,5 @@
 # Process this file with autoconf to produce a configure script.
-AC_INIT([which],[2.40])
+AC_INIT([which],[2.22])
 AC_CONFIG_SRCDIR(which.c)
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE
@@ -22,7 +22,11 @@ AC_USE_SYSTEM_EXTENSIONS
 
 # Checks for libraries.
 if test "$which_cv_iberty" = yes ; then
-  AC_CHECK_LIB(iberty, xmalloc)
+  # Check for xmalloc in libiberty
+  AC_CHECK_LIB([iberty], [xmalloc],
+    [AC_MSG_NOTICE([xmalloc function found in libiberty])
+     LIBS="$LIBS -liberty"],
+    [AC_DEFINE([NEED_XMALLOC], [1], [Define if xmalloc is not available in libiberty])])
 fi
 
 # Checks for header files.
@@ -39,11 +43,6 @@ AC_TYPE_SIZE_T
 # Checks for library functions.
 AC_TYPE_GETGROUPS
 AC_CHECK_FUNCS(strchr memcpy getopt_long getcwd getwd sysconf getgroups eaccess)
-
-if test "$ac_cv_lib_iberty_xmalloc" = no \
-     -o "$which_cv_iberty" = no ; then
-  AC_DEFINE([NEED_XMALLOC], 1, [Define if you need xmalloc().])
-fi
 
 # Additional stuff needed for the tilde directory
 AC_CHECK_PROG(AR, ar, ar, ar)
