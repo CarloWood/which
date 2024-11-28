@@ -1,26 +1,32 @@
 # Process this file with autoconf to produce a configure script.
-AC_INIT([which],[2.22])
-AC_CONFIG_SRCDIR(which.c)
-AC_CONFIG_AUX_DIR([build-aux])
-AM_INIT_AUTOMAKE
-AC_CONFIG_HEADERS(config.h)
-AM_MAINTAINER_MODE
+define(CW_VERSION_MAJOR, 2)
+define(CW_VERSION_MINOR, 22)
 
 # Because we use cwautomacros.
-CW_AUTOMACROS
+define(CW_PACKAGE_NAME, [which])
+define(CW_BUGREPORT, [which-bugs@gnu.org])
+
+# CW_COMPILE_FLAGS may contain warning flags, but also default debug flag (-g*) and/or optimization flag (-O*)
+# which will be stripped when not required, and an optional -std=* flag.
+define(CW_COMPILE_FLAGS, [-W -Wall -Woverloaded-virtual -Wundef -Wpointer-arith -Wwrite-strings -Winline])
+# CW_THREADS can be [no] (single-threaded), [yes] (multi-threaded) or [both] (single and multi-threaded applications).
+define(CW_THREADS, [no])
+# CW_MAX_ERRORS is the maximum number of errors the compiler will show.
+define(CW_MAX_ERRORS, 2)
+
+# Include cwm4 header.
+m4_include([cwm4/configure_ac_top.m4])
+
+# Checks for programs.
+AC_PROG_INSTALL
+AC_LANG([C])
+
+AC_CONFIG_SRCDIR(which.c)
 
 which_cv_iberty=yes
 AC_ARG_ENABLE(iberty,
   [  --disable-iberty        do not try to find and use the iberty library],
   which_cv_iberty=$enableval)
-
-# Checks for programs.
-AC_PROG_CC
-AC_PROG_INSTALL
-AC_LANG([C])
-AC_USE_SYSTEM_EXTENSIONS
-# Make sure we use 64-bit file API on 32-bit systems.
-AC_SYS_LARGEFILE
 
 # Checks for libraries.
 if test "$which_cv_iberty" = yes ; then
@@ -46,6 +52,9 @@ AC_TYPE_SIZE_T
 AC_TYPE_GETGROUPS
 AC_CHECK_FUNCS(strchr memcpy getopt_long getcwd getwd sysconf getgroups eaccess)
 
+# Make sure we use 64-bit file API on 32-bit systems.
+AC_SYS_LARGEFILE
+
 # Additional stuff needed for the tilde directory
 AC_CHECK_PROG(AR, ar, ar, ar)
 AC_PROG_RANLIB
@@ -54,5 +63,7 @@ AC_CHECK_FUNCS(getpwent getpwnam getpwuid)
 BASH_CHECK_GETPW_FUNCS
 
 # Generate output files.
-AC_CONFIG_FILES([Makefile maintMakefile tilde/Makefile])
-AC_OUTPUT
+AC_CONFIG_FILES([maintMakefile tilde/Makefile])
+
+# Include cwm4 footer.
+m4_include([cwm4/configure_ac_bottom.m4])
