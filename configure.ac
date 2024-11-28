@@ -19,6 +19,8 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_LANG([C])
 AC_USE_SYSTEM_EXTENSIONS
+# Make sure we use 64-bit file API on 32-bit systems.
+AC_SYS_LARGEFILE
 
 # Checks for libraries.
 if test "$which_cv_iberty" = yes ; then
