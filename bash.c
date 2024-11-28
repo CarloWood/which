@@ -29,6 +29,10 @@
 #endif
 #include "bash.h"
 
+#if defined (HAVE_EACCESS)
+int eaccess(const char *pathname, int mode);
+#endif
+
 /* Use the type that was determined by configure. */
 #define GID_T GETGROUPS_T
 
