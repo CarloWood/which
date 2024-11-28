@@ -55,8 +55,7 @@ extern struct passwd *getpwuid ();
 #endif /* !HAVE_GETPW_DECLS */
 
 char *
-get_env_value (varname)
-     char *varname;
+get_env_value (char *varname)
 {
   return ((char *)getenv (varname));
 }
