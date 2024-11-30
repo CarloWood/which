@@ -63,7 +63,7 @@ AC_CHECK_FUNCS(getpwent getpwnam getpwuid)
 BASH_CHECK_GETPW_FUNCS
 
 # Generate output files.
-AC_CONFIG_FILES([maintMakefile tilde/Makefile])
+AC_CONFIG_FILES([maintMakefile])
 
 # Include cwm4 footer.
 m4_include([cwm4/configure_ac_bottom.m4])

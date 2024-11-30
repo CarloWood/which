@@ -20,10 +20,12 @@
 #include <stdio.h>
 #include <ctype.h>
 #include "getopt.h"
-#include "tilde/tilde.h"
 #include "bash.h"
 #include <ctype.h>
 #include <limits.h>
+
+// Defined in tilde.c.
+char* tilde_expand (const char *string);
 
 #ifdef _WIN32
 # include <errno.h>

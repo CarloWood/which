@@ -93,3 +93,15 @@ extern void *xrealloc(void *ptr, size_t size);
 #define CHAR_CMP(c1, c2) (c1 == c2)
 #endif /* _WIN32  */
 #define IS_DIRSEP			IS_SLASH
+
+/* A function can be defined using prototypes and compile on both ANSI C
+   and traditional C compilers with something like this:
+	extern char *func PARAMS((char *, char *, int)); */
+
+#if !defined (PARAMS)
+#  if defined (__STDC__) || defined (__GNUC__) || defined (__cplusplus) || defined (PROTOTYPES)
+#    define PARAMS(protos) protos
+#  else
+#    define PARAMS(protos) ()
+#  endif
+#endif

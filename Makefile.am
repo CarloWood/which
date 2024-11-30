@@ -1,9 +1,9 @@
 include $(srcdir)/cwm4/root_makefile_top.am
 
 AUTOMAKE_OPTIONS = no-texinfo.tex
-ACLOCAL_AMFLAGS += -I m4
+ACLOCAL_AMFLAGS += -I m4_bash
 
-SUBDIRS = @CW_SUBDIRS@ tilde .
+SUBDIRS = @CW_SUBDIRS@ .
 
 BUILT_SOURCES =
 EXTRA_DIST += COPYING $(man_MANS) $(BUILT_SOURCES) README.alias README EXAMPLES which.1
@@ -16,12 +16,12 @@ which_SOURCES = \
 	getopt1.c \
 	bash.c \
 	which.c \
+	tilde.c \
 	bash.h \
 	sys.h \
 	getopt.h \
 	posixstat.h
 
-LDADD = $(top_builddir)/tilde/libtilde.a
 info_TEXINFOS = which.texi
 man_MANS = which.1
 
