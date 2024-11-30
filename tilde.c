@@ -19,6 +19,8 @@
    along with Readline.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "sys.h"
+
 #if defined (HAVE_CONFIG_H)
 #  include <config.h>
 #endif
@@ -34,7 +36,7 @@
 #  include <string.h>
 #else /* !HAVE_STRING_H */
 #  include <strings.h>
-#endif /* !HAVE_STRING_H */  
+#endif /* !HAVE_STRING_H */
 
 #if defined (HAVE_STDLIB_H)
 #  include <stdlib.h>
@@ -52,7 +54,7 @@
 #if defined (TEST) || defined (STATIC_MALLOC)
 static void *xmalloc (), *xrealloc ();
 #else
-#  include "xmalloc.h"
+//#  include "xmalloc.h"
 #endif /* TEST || STATIC_MALLOC */
 
 #if !defined (HAVE_GETPW_DECLS)
@@ -236,7 +238,7 @@ tilde_expand (const char *string)
       if (expansion == 0)
 	expansion = tilde_word;
       else
-	xfree (tilde_word);	
+	free (tilde_word);
 
       len = strlen (expansion);
 #ifdef __CYGWIN__
@@ -251,7 +253,7 @@ tilde_expand (const char *string)
 	  strcpy (result + result_index, expansion);
 	  result_index += len;
 	}
-      xfree (expansion);
+      free (expansion);
     }
 
   result[result_index] = '\0';
@@ -373,8 +375,8 @@ tilde_expand_word (const char *filename)
       if (expansion)
 	{
 	  dirname = glue_prefix_and_suffix (expansion, filename, user_len);
-	  xfree (username);
-	  xfree (expansion);
+	  free (username);
+	  free (expansion);
 	  return (dirname);
 	}
     }
@@ -397,7 +399,7 @@ tilde_expand_word (const char *filename)
 	  if (expansion)
 	    {
 	      dirname = glue_prefix_and_suffix (expansion, filename, user_len);
-	      xfree (expansion);
+	      free (expansion);
 	    }
 	}
       /* If we don't have a failure hook, or if the failure hook did not
@@ -410,7 +412,7 @@ tilde_expand_word (const char *filename)
     dirname = glue_prefix_and_suffix (user_entry->pw_dir, filename, user_len);
 #endif
 
-  xfree (username);
+  free (username);
 #if defined (HAVE_GETPWENT)
   endpwent ();
 #endif
