@@ -1,23 +1,23 @@
 /* tilde.c -- Tilde expansion code (~/foo := $HOME/foo). */
 
-/* Copyright (C) 1988,1989 Free Software Foundation, Inc.
+/* Copyright (C) 1988-2020 Free Software Foundation, Inc.
 
-   This file is part of GNU Readline, a library for reading lines
-   of text with interactive input and history editing.
+   This file is part of the GNU Readline Library (Readline), a library
+   for reading lines of text with interactive input and history editing.
 
-   Readline is free software; you can redistribute it and/or modify it
-   under the terms of the GNU General Public License as published by the
-   Free Software Foundation; either version 2, or (at your option) any
-   later version.
+   Readline is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
-   Readline is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   General Public License for more details.
+   Readline is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with Readline; see the file COPYING.  If not, write to the Free
-   Software Foundation, 59 Temple Place, Suite 330, Boston, MA 02111 USA. */
+   along with Readline.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #if defined (HAVE_CONFIG_H)
 #  include <config.h>
@@ -48,7 +48,6 @@
 #endif
 
 #include "tilde.h"
-#include "../sys.h"
 
 #if defined (TEST) || defined (STATIC_MALLOC)
 static void *xmalloc (), *xrealloc ();
@@ -58,10 +57,10 @@ static void *xmalloc (), *xrealloc ();
 
 #if !defined (HAVE_GETPW_DECLS)
 #  if defined (HAVE_GETPWUID)
-extern struct passwd *getpwuid PARAMS((uid_t));
+extern struct passwd *getpwuid (uid_t);
 #  endif
 #  if defined (HAVE_GETPWNAM)
-extern struct passwd *getpwnam PARAMS((const char *));
+extern struct passwd *getpwnam (const char *);
 #  endif
 #endif /* !HAVE_GETPW_DECLS */
 
@@ -80,8 +79,8 @@ extern struct passwd *getpwnam PARAMS((const char *));
 /* If being compiled as part of bash, these will be satisfied from
    variables.o.  If being compiled as part of readline, they will
    be satisfied from shell.o. */
-extern char *sh_get_home_dir PARAMS((void));
-extern char *sh_get_env_value PARAMS((const char *));
+extern char *sh_get_home_dir (void);
+extern char *sh_get_env_value (const char *);
 
 /* The default value of tilde_additional_prefixes.  This is set to
    whitespace preceding a tilde so that simple programs which do not
@@ -117,10 +116,10 @@ char **tilde_additional_prefixes = (char **)default_prefixes;
    `:' and `=~'. */
 char **tilde_additional_suffixes = (char **)default_suffixes;
 
-static int tilde_find_prefix PARAMS((const char *, int *));
-static int tilde_find_suffix PARAMS((const char *));
-static char *isolate_tilde_prefix PARAMS((const char *, int *));
-static char *glue_prefix_and_suffix PARAMS((char *, const char *, int));
+static int tilde_find_prefix (const char *, int *);
+static int tilde_find_suffix (const char *);
+static char *isolate_tilde_prefix (const char *, int *);
+static char *glue_prefix_and_suffix (char *, const char *, int);
 
 /* Find the start of a tilde expansion in STRING, and return the index of
    the tilde which starts the expansion.  Place the length of the text
@@ -169,7 +168,11 @@ tilde_find_suffix (const char *string)
 
   for (i = 0; i < string_len; i++)
     {
-      if (IS_DIRSEP(string[i]))
+#if defined (__MSDOS__)
+      if (string[i] == '/' || string[i] == '\\' /* || !string[i] */)
+#else
+      if (string[i] == '/' /* || !string[i] */)
+#endif
 	break;
 
       for (j = 0; suffixes && suffixes[j]; j++)
@@ -229,13 +232,17 @@ tilde_expand (const char *string)
       string += end;
 
       expansion = tilde_expand_word (tilde_word);
-      free (tilde_word);
+
+      if (expansion == 0)
+	expansion = tilde_word;
+      else
+	xfree (tilde_word);	
 
       len = strlen (expansion);
-#if defined __CYGWIN__ || defined _WIN32
+#ifdef __CYGWIN__
       /* Fix for Cygwin to prevent ~user/xxx from expanding to //xxx when
 	 $HOME for `user' is /.  On cygwin, // denotes a network drive. */
-      if (len > 1 || !IS_DIRSEP(*expansion) || IS_DIRSEP(*string))
+      if (len > 1 || *expansion != '/' || *string != '/')
 #endif
 	{
 	  if ((result_index + len + 1) > result_size)
@@ -244,7 +251,7 @@ tilde_expand (const char *string)
 	  strcpy (result + result_index, expansion);
 	  result_index += len;
 	}
-      free (expansion);
+      xfree (expansion);
     }
 
   result[result_index] = '\0';
@@ -262,7 +269,11 @@ isolate_tilde_prefix (const char *fname, int *lenp)
   int i;
 
   ret = (char *)xmalloc (strlen (fname));
-  for (i = 1; fname[i] && !IS_DIRSEP(fname[i]); i++)
+#if defined (__MSDOS__)
+  for (i = 1; fname[i] && fname[i] != '/' && fname[i] != '\\'; i++)
+#else
+  for (i = 1; fname[i] && fname[i] != '/'; i++)
+#endif
     ret[i - 1] = fname[i];
   ret[i - 1] = '\0';
   if (lenp)
@@ -337,10 +348,14 @@ tilde_expand_word (const char *filename)
   /* A leading `~/' or a bare `~' is *always* translated to the value of
      $HOME or the home directory of the current user, regardless of any
      preexpansion hook. */
-  if (filename[1] == '\0' || IS_DIRSEP(filename[1]))
+  if (filename[1] == '\0' || filename[1] == '/')
     {
       /* Prefix $HOME to the rest of the string. */
       expansion = sh_get_env_value ("HOME");
+#if defined (_WIN32)
+      if (expansion == 0)
+	expansion = sh_get_env_value ("APPDATA");
+#endif
 
       /* If there is no HOME variable, look up the directory in
 	 the password database. */
@@ -358,8 +373,8 @@ tilde_expand_word (const char *filename)
       if (expansion)
 	{
 	  dirname = glue_prefix_and_suffix (expansion, filename, user_len);
-	  free (username);
-	  free (expansion);
+	  xfree (username);
+	  xfree (expansion);
 	  return (dirname);
 	}
     }
@@ -382,7 +397,7 @@ tilde_expand_word (const char *filename)
 	  if (expansion)
 	    {
 	      dirname = glue_prefix_and_suffix (expansion, filename, user_len);
-	      free (expansion);
+	      xfree (expansion);
 	    }
 	}
       /* If we don't have a failure hook, or if the failure hook did not
@@ -395,7 +410,7 @@ tilde_expand_word (const char *filename)
     dirname = glue_prefix_and_suffix (user_entry->pw_dir, filename, user_len);
 #endif
 
-  free (username);
+  xfree (username);
 #if defined (HAVE_GETPWENT)
   endpwent ();
 #endif
@@ -407,7 +422,7 @@ tilde_expand_word (const char *filename)
 #undef NULL
 #include <stdio.h>
 
-int main (int argc, char **argv)
+main (int argc, char **argv)
 {
   char *result, line[512];
   int done = 0;
