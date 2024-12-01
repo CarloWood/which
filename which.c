@@ -94,7 +94,7 @@ static char *find_command_in_path(const char *name, const char *path_list, int *
 
   name_len = strlen(name);
 
-  if ((char*)strchr(name, '/') == (char*)NULL)                // Does not contain any slashes at all?
+  if (!absolute_program(name))          // Does not contain any slashes at all?
     absolute_path_given = 0;
   else
   {
