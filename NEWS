@@ -1,7 +1,8 @@
-Version 2.21 --> 2.40
+Version 2.21 --> 2.22
 
-* Windows support improved
-
+* Windows support improved (by Mitch Capper)
+* The function that decides if a found path is executable (file_status)
+  was updated to that of bash version 5.2.
 
 Version 2.20 --> 2.21
 
