@@ -2,7 +2,7 @@
 define(CW_VERSION_MAJOR, 2)
 define(CW_VERSION_MINOR, 22)
 
-# Because we use cwautomacros.
+# Because we use cwm4.
 define(CW_PACKAGE_NAME, [which])
 define(CW_BUGREPORT, [which-bugs@gnu.org])
 
