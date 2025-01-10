@@ -18,15 +18,13 @@
 <LI><A HREF="which-!VERSION!.tar.gz">which-!VERSION!.tar.gz</A>
 </P>
 
-<P><LI><A HREF="which.lsm">which.lsm</A></P>
-
 <H2>What is new?</H2>
 
 <A HREF=NEWS>NEWS</A>
 
 <H2>ChangeLog</H2>
 
-CHANGELOGLIST
+<A HREF="https://github.com/CarloWood/which/compare/!OLD_TAG!...!NEW_TAG!?diff=unified&w=">See github</A>
 
 <H2>Manual page</H2>
 

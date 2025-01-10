@@ -21,7 +21,6 @@ config.status
 ChangeLog
 which-2.spec
 EXAMPLES
-which.lsm
 maintMakefile
 mdate-sh
 version.texi

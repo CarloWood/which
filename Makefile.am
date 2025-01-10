@@ -19,6 +19,7 @@ which_SOURCES = \
 	tilde.c \
 	bash.h \
 	sys.h \
+	tilde.h \
 	getopt.h \
 	posixstat.h
 
@@ -33,9 +34,9 @@ distclean-local:
 	rm -rf .deps autom4te-*.cache which-*.tar.gz
 
 MAINTAINERCLEANFILES += aclocal.m4 Makefile.in config.h.in stamp-h.in configure \
-        ChangeLog EXAMPLES which-2.spec index.html cvslog-*.html README \
+        ChangeLog EXAMPLES which-2.spec index.html README \
 	texinfo2man which.1 install-sh missing mkinstalldirs \
-	config.cache config.log depcomp compile config.status which.lsm
+	config.cache config.log depcomp compile config.status
 
 @MAINTAINER_MODE_TRUE@include maintMakefile
 
